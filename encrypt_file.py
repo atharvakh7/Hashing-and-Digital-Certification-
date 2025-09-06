@@ -30,6 +30,7 @@ if __name__ == "__main__":
         f.write(ciphertext)
     with open(args.receiver_pub, "rb") as f:
         receiver_public = serialization.load_pem_public_key(f.read(), backend=default_backend())
+        
     wrapped_key = receiver_public.encrypt(
         aes_key,
         padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),

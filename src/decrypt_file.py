@@ -3,13 +3,14 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
+
 def decrypt_aes(ciphertext, key):
     iv = ciphertext[:16]
     actual_ciphertext = ciphertext[16:]
     cipher = Cipher(algorithms.AES(key), modes.CFB(iv), backend=default_backend())
     decryptor = cipher.decryptor()
-    plaintext = decryptor.update(actual_ciphertext) + decryptor.finalize()
-    return plaintext
+    return decryptor.update(actual_ciphertext) + decryptor.finalize()
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Decrypt file with AES + RSA + Signature Verification")
     parser.add_argument("--infile", required=True, help="Input encrypted file")
@@ -20,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--receiver-priv", required=True, help="Receiver private key")
     parser.add_argument("--sender-pub", required=True, help="Sender public key")
     args = parser.parse_args()
+
     with open(args.receiver_priv, "rb") as f:
         receiver_private = serialization.load_pem_private_key(f.read(), password=None, backend=default_backend())
     with open(args.keyfile, "rb") as f:
